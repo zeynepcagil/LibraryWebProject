@@ -1,0 +1,76 @@
+﻿@model List<Library_Project.Models.Book>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">📚 Library Search</h2>
+
+    <form method="get" class="row g-3 mb-4">
+
+        <!-- Search -->
+        <div class="col-md-4">
+            <input type="text"
+                   name="search"
+                   value="@Context.Request.Query["search"]"
+                   class="form-control"
+                   placeholder="Search by title or author" />
+        </div>
+
+        <!-- Category -->
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
+                @foreach (var cat in ViewBag.Categories)
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+        </div>
+
+        <!-- Rating -->
+        <div class="col-md-3">
+            <select name="minRating" class="form-select">
+                <option value="">Min Rating</option>
+                <option value="5">5+</option>
+                <option value="7">7+</option>
+                <option value="8">8+</option>
+                <option value="9">9+</option>
+            </select>
+        </div>
+
+        <!-- Button -->
+        <div class="col-md-2 d-grid">
+            <button class="btn btn-primary">Search</button>
+        </div>
+
+    </form>
+
+    <!-- Results -->
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Rating</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>@book.TITLE</td>
+                    <td>@book.AUTHOR</td>
+                    <td>@book.CATEGORY</td>
+                    <td>⭐ @book.RATING</td>
+                    <td>@book.STOCK</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

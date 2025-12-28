@@ -1,0 +1,47 @@
+﻿@model Library_Project.Models.Book
+
+@{
+    ViewData["Title"] = "Add Book";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>Add New Book</h4>
+        </div>
+
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input asp-for="TITLE" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Author</label>
+                    <input asp-for="AUTHOR" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <input asp-for="CATEGORY" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Publication Year</label>
+                    <input asp-for="PUBLICATION_YEAR" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Stock</label>
+                    <input asp-for="STOCK" class="form-control" />
+                </div>
+
+                <div class="text-end">
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

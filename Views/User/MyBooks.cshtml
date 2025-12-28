@@ -1,0 +1,50 @@
+﻿@model List<Library_Project.Models.MyBookViewModel>
+
+@{
+    ViewData["Title"] = "My Books";
+}
+
+<h2 class="mb-4">📚 My Loaned Books</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info text-center">
+        <h5>No books on loan</h5>
+        <p>There are no books available for loan under your name.</p>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Book</th>
+                <th>Due Date</th>
+                <th>Remaining Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.DueDate.ToShortDateString()</td>
+                    <td>
+                        @if (item.RemainingDays >= 0)
+                        {
+                            <span class="badge bg-success">
+                                @item.RemainingDays day(s)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">
+                                Overdue
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

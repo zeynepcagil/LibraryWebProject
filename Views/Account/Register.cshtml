@@ -1,0 +1,39 @@
+﻿@model Library_Project.Models.RegisterViewModel
+
+<h2>Sign Up</h2>
+
+<form method="post">
+    <div class="mb-2">
+        <input asp-for="USERNAME" class="form-control" placeholder="Username" />
+    </div>
+
+    <div class="mb-2">
+        <input asp-for="EMAIL" class="form-control" placeholder="Email" />
+    </div>
+
+    <div class="mb-2">
+        <input asp-for="PASSWORD" type="password" class="form-control" placeholder="Password" />
+    </div>
+
+    <div class="mb-2">
+        <input asp-for="NAME" class="form-control" placeholder="Name" />
+    </div>
+
+    <div class="mb-2">
+        <input asp-for="SURNAME" class="form-control" placeholder="Surname" />
+    </div>
+
+    <div class="mb-2">
+        <input asp-for="PHONE" class="form-control" placeholder="Phone" />
+    </div>
+
+    <div class="mb-3">
+        <input asp-for="BIRTHDATE" type="date" class="form-control" />
+    </div>
+
+    <button class="btn btn-success">Sign Up</button>
+</form>
+
+<div class="mt-2">
+    <a asp-action="Login">Already have an account? Sign In</a>
+</div>
