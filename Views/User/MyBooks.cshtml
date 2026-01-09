@@ -4,47 +4,80 @@
     ViewData["Title"] = "My Books";
 }
 
-<h2 class="mb-4">📚 My Loaned Books</h2>
-
-@if (Model == null || !Model.Any())
-{
-    <div class="alert alert-info text-center">
-        <h5>No books on loan</h5>
-        <p>There are no books available for loan under your name.</p>
+<div class="container mt-4">
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-primary text-white rounded p-3 me-3 shadow-sm">
+            <i class="fas fa-book-reader fa-2x"></i>
+        </div>
+        <div>
+            <h2 class="fw-bold text-primary mb-0">My Library</h2>
+            <p class="text-muted mb-0">Track your active loans and due dates.</p>
+        </div>
     </div>
-}
-else
-{
-    <table class="table table-bordered table-hover shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>Book</th>
-                <th>Due Date</th>
-                <th>Remaining Days</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>@item.DueDate.ToShortDateString()</td>
-                    <td>
-                        @if (item.RemainingDays >= 0)
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <div class="text-muted mb-3">
+                    <i class="fas fa-book-open fa-4x opacity-25"></i>
+                </div>
+                <h5 class="fw-bold text-secondary">No Active Loans</h5>
+                <p class="text-muted">You haven't borrowed any books yet.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4 mt-2">
+                    <i class="fas fa-search me-2"></i>Browse Catalog
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow border-0 overflow-hidden">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 text-secondary"><i class="fas fa-list-ul me-2"></i>Loaned Books List</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary">
+                        <tr>
+                            <th class="ps-4 py-3">Book Title</th>
+                            <th class="py-3"><i class="far fa-calendar-alt me-1"></i> Due Date</th>
+                            <th class="py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
                         {
-                            <span class="badge bg-success">
-                                @item.RemainingDays day(s)
-                            </span>
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">
+                                    <i class="fas fa-book text-primary me-2 opacity-50"></i> @item.Title
+                                </td>
+                                <td class="text-secondary">@item.DueDate.ToShortDateString()</td>
+                                <td>
+                                    @if (item.RemainingDays >= 3)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill">
+                                            <i class="fas fa-clock me-1"></i> @item.RemainingDays days left
+                                        </span>
+                                    }
+                                    else if (item.RemainingDays >= 0)
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning border border-warning px-3 py-2 rounded-pill">
+                                            <i class="fas fa-exclamation-circle me-1"></i> @item.RemainingDays days left
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2 rounded-pill">
+                                            <i class="fas fa-times-circle me-1"></i> Overdue (@Math.Abs(item.RemainingDays) days)
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
                         }
-                        else
-                        {
-                            <span class="badge bg-danger">
-                                Overdue
-                            </span>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

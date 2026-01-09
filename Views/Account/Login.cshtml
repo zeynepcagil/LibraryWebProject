@@ -1,19 +1,53 @@
 ﻿@model Library_Project.Models.LoginViewModel
 
-<h2>Sign In</h2>
+@{
+    ViewData["Title"] = "Sign In";
+}
 
-<form asp-action="Login" method="post">
-    <div>
-        <label>Email</label>
-        <input asp-for="Email" />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-3">
+                    <h3 class="fw-bold mb-0"><i class="fas fa-sign-in-alt me-2"></i>Welcome Back</h3>
+                    <small class="opacity-75">Sign in to your account</small>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-envelope text-muted"></i></span>
+                                <input asp-for="Email" class="form-control border-start-0" placeholder="name@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary small">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-lock text-muted"></i></span>
+                                <input asp-for="Password" type="password" class="form-control border-start-0" placeholder="••••••••" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
+                            Login <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light text-center py-3 border-top-0 rounded-bottom-3">
+                    <small class="text-muted">Don't have an account?</small>
+                    <a asp-action="Register" class="text-decoration-none fw-bold text-primary ms-1">Sign Up</a>
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <div>
-        <label>Password</label>
-        <input asp-for="Password" type="password" />
-    </div>
-
-    <button type="submit">Login</button>
-</form>
-
-<div asp-validation-summary="All"></div>
+</div>

@@ -15,12 +15,62 @@ public class BookController : Controller
         _context = context;
     }
 
-    // All Books
+    // All Books (Ana Sayfa)
     public IActionResult Index()
     {
         var books = _context.Books.ToList();
         return View(books);
     }
+
+    // ==========================================
+    // YENİ EKLENEN KISIM: DETAYLAR VE YORUMLAR
+    // ==========================================
+
+    // Kitap Detayı ve Yorumları Göster
+    public IActionResult Details(int id)
+    {
+        // Kitabı bulurken Yorumları (Reviews) ve Yorumu Yapan Kullanıcıyı (User) dahil et
+        var book = _context.Books
+            .Include(b => b.Reviews)
+            .ThenInclude(r => r.User)
+            .FirstOrDefault(b => b.BOOK_ID == id);
+
+        if (book == null) return NotFound();
+
+        return View(book);
+    }
+
+    // Yorum Ekleme İşlemi
+    [HttpPost]
+    public IActionResult AddReview(int bookId, int rating, string comment)
+    {
+        // Oturum açan kullanıcının ID'sini al
+        int? userId = HttpContext.Session.GetInt32("id");
+
+        // Eğer oturum düşmüşse Login'e at
+        if (userId == null) return RedirectToAction("Login", "Account");
+
+        // Yeni yorum objesi oluştur
+        var newReview = new Review
+        {
+            BOOK_ID = bookId,
+            USER_ID = (int)userId,
+            RATING = rating,
+            COMMENT = comment,
+            REVIEW_DATE = DateTime.Now
+        };
+
+        // Veritabanına ekle ve kaydet
+        _context.Reviews.Add(newReview);
+        _context.SaveChanges();
+
+        // Kitabın detay sayfasına geri dön (Yorumu görsün)
+        return RedirectToAction("Details", new { id = bookId });
+    }
+
+    // ==========================================
+    // ADMIN İŞLEMLERİ (MEVCUT KODLARIN)
+    // ==========================================
 
     // Add Book (Only Admin)
     [Authorize(Policy = "AdminOnly")]

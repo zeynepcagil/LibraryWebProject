@@ -1,0 +1,154 @@
+﻿@model Library_Project.Models.Book
+
+@{
+    ViewData["Title"] = Model.TITLE;
+}
+
+<div class="container mt-5">
+
+    <a href="javascript:history.back()" class="text-decoration-none text-muted mb-3 d-inline-block">
+        <i class="fas fa-arrow-left me-1"></i> Back to List
+    </a>
+
+    <div class="card border-0 shadow-lg overflow-hidden mb-5">
+        <div class="row g-0">
+            <div class="col-md-4 bg-light d-flex align-items-center justify-content-center p-4">
+                <img src="https://via.placeholder.com/300x450?text=@Model.TITLE" class="img-fluid rounded shadow" alt="@Model.TITLE" style="max-height: 450px;">
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="badge bg-primary mb-2">@Model.CATEGORY</span>
+                            <h1 class="card-title fw-bold display-6 mb-1">@Model.TITLE</h1>
+                            <p class="text-muted fs-5 mb-3">by <span class="text-dark fw-bold">@Model.AUTHOR</span></p>
+                        </div>
+                        <div class="text-center bg-light rounded p-3 border">
+                            <h2 class="mb-0 text-warning fw-bold">@Model.RATING</h2>
+                            <small class="text-muted">/ 10</small>
+                            <div class="small text-warning">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row mb-4">
+                        <div class="col-6 col-md-3 mb-3">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.75rem;">Year</small>
+                            <span class="fs-5"><i class="fas fa-calendar-alt text-secondary me-1"></i> @Model.PUBLICATION_YEAR</span>
+                        </div>
+                        <div class="col-6 col-md-3 mb-3">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.75rem;">Pages</small>
+                            <span class="fs-5"><i class="fas fa-file-alt text-secondary me-1"></i> @Model.PAGE</span>
+                        </div>
+                        <div class="col-6 col-md-4 mb-3">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.75rem;">Status</small>
+                            @if (Model.STOCK > 0)
+                            {
+                                <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Available (@Model.STOCK)</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger fw-bold"><i class="fas fa-times-circle me-1"></i> Out of Stock</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        @if (Model.STOCK > 0)
+                        {
+                            <button class="btn btn-primary px-4 shadow-sm"><i class="fas fa-book-reader me-2"></i>Borrow Request</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary px-4" disabled>Not Available</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h3 class="fw-bold mb-4"><i class="fas fa-comments text-primary me-2"></i>Community Reviews</h3>
+
+            @if (Context.Session.GetInt32("id") != null)
+            {
+                <div class="card border-0 shadow-sm mb-5">
+                    <div class="card-body p-4 bg-light rounded">
+                        <h5 class="card-title fw-bold mb-3">Write a Review</h5>
+                        <form asp-action="AddReview" method="post">
+                            <input type="hidden" name="bookId" value="@Model.BOOK_ID" />
+
+                            <div class="row g-3">
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold text-muted">Rating</label>
+                                    <input type="number" name="rating" class="form-control text-center fw-bold" min="1" max="10" value="10" required />
+                                </div>
+                                <div class="col-md-10">
+                                    <label class="form-label small fw-bold text-muted">Your Comment</label>
+                                    <textarea name="comment" class="form-control" rows="2" placeholder="What did you think about this book?" required></textarea>
+                                </div>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-dark px-4"><i class="fas fa-paper-plane me-1"></i> Post Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info shadow-sm border-0 d-flex align-items-center">
+                    <i class="fas fa-info-circle fa-2x me-3"></i>
+                    <div>
+                        Please <a href="/Account/Login" class="fw-bold text-info text-decoration-underline">login</a> to share your thoughts about this book.
+                    </div>
+                </div>
+            }
+
+            @if (Model.Reviews != null && Model.Reviews.Any())
+            {
+                <div class="vstack gap-3">
+                    @foreach (var review in Model.Reviews.OrderByDescending(r => r.REVIEW_DATE))
+                    {
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px;">
+                                            @(review.User?.NAME?.Substring(0, 1) ?? "U")
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">@(review.User != null ? review.User.NAME + " " + review.User.SURNAME : "Unknown User")</h6>
+                                            <small class="text-muted" style="font-size: 0.75rem;">@review.REVIEW_DATE.ToString("dd MMM yyyy")</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-warning text-dark fs-6">
+                                            <i class="fas fa-star me-1"></i>@review.RATING
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="card-text text-secondary mt-3 ms-5 ps-2 border-start border-3 border-light">
+                                    @review.COMMENT
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 opacity-50">
+                    <i class="far fa-comment-dots fa-3x mb-3"></i>
+                    <p>No reviews yet. Be the first to share your opinion!</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

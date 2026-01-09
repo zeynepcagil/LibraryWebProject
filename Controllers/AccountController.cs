@@ -48,14 +48,24 @@ public class AccountController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
+        // ============================================================
+        // EKLENEN KISIM: Session'a ID atıyoruz (Yorum yapabilmek için şart)
+        // ============================================================
+        HttpContext.Session.SetInt32("id", user.USER_ID);
+
         return RedirectToAction("Index", "Home");
     }
 
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
+
+        // Çıkış yapınca session'ı da temizleyelim
+        HttpContext.Session.Clear();
+
         return RedirectToAction("Index", "Home");
     }
+
     [HttpGet]
     public IActionResult Register()
     {
@@ -95,13 +105,12 @@ public class AccountController : Controller
 
         // otomatik login
         var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, user.NAME),
-        new Claim(ClaimTypes.Email, user.EMAIL),
-        new Claim("UserId", user.USER_ID.ToString()),
-        new Claim("IsAdmin", user.RANK ? "1" : "0")
-
-    };
+        {
+            new Claim(ClaimTypes.Name, user.NAME),
+            new Claim(ClaimTypes.Email, user.EMAIL),
+            new Claim("UserId", user.USER_ID.ToString()),
+            new Claim("IsAdmin", user.RANK ? "1" : "0")
+        };
 
         var identity = new ClaimsIdentity(
             claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -109,6 +118,11 @@ public class AccountController : Controller
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
+
+        // ============================================================
+        // BURAYA DA EKLİYORUZ (Kayıt olunca hemen yorum yapabilsin diye)
+        // ============================================================
+        HttpContext.Session.SetInt32("id", user.USER_ID);
 
         return RedirectToAction("Index", "Home");
     }

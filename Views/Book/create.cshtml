@@ -1,47 +1,79 @@
 ﻿@model Library_Project.Models.Book
 
 @{
-    ViewData["Title"] = "Add Book";
+    ViewData["Title"] = "Add New Book";
 }
 
-<div class="container mt-4">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4>Add New Book</h4>
-        </div>
-
-        <div class="card-body">
-            <form asp-action="Create" method="post">
-                <div class="mb-3">
-                    <label class="form-label">Title</label>
-                    <input asp-for="TITLE" class="form-control" />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-plus-circle me-2"></i>Add New Book</h4>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Author</label>
-                    <input asp-for="AUTHOR" class="form-control" />
-                </div>
+                <div class="card-body p-5">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="mb-3">
-                    <label class="form-label">Category</label>
-                    <input asp-for="CATEGORY" class="form-control" />
-                </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary"><i class="fas fa-heading me-1"></i> Book Title</label>
+                            <input asp-for="TITLE" class="form-control form-control-lg" placeholder="e.g. The Lord of the Rings" />
+                            <span asp-validation-for="TITLE" class="text-danger small"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Publication Year</label>
-                    <input asp-for="PUBLICATION_YEAR" class="form-control" />
-                </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary"><i class="fas fa-pen-nib me-1"></i> Author</label>
+                            <input asp-for="AUTHOR" class="form-control" placeholder="e.g. J.R.R. Tolkien" />
+                            <span asp-validation-for="AUTHOR" class="text-danger small"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Stock</label>
-                    <input asp-for="STOCK" class="form-control" />
-                </div>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary"><i class="fas fa-bookmark me-1"></i> Category</label>
+                                <input asp-for="CATEGORY" class="form-control" placeholder="e.g. Fiction" />
+                                <span asp-validation-for="CATEGORY" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary"><i class="fas fa-file-alt me-1"></i> Page Count</label>
+                                <input asp-for="PAGE" class="form-control" type="number" min="1" placeholder="e.g. 350" />
+                                <span asp-validation-for="PAGE" class="text-danger small"></span>
+                            </div>
+                        </div>
 
-                <div class="text-end">
-                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-success">Save</button>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary"><i class="fas fa-calendar-alt me-1"></i> Publication Year</label>
+                                <input asp-for="PUBLICATION_YEAR" class="form-control" type="number" placeholder="e.g. 1954" />
+                                <span asp-validation-for="PUBLICATION_YEAR" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary"><i class="fas fa-boxes me-1"></i> Stock Quantity</label>
+                                <input asp-for="STOCK" class="form-control" type="number" min="0" placeholder="e.g. 10" />
+                                <span asp-validation-for="STOCK" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-secondary px-4">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success px-5 shadow-sm">
+                                <i class="fas fa-save me-1"></i> Save Book
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
