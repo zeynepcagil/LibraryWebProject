@@ -3,146 +3,160 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Library_Project.Models;
 
-namespace Library_Project.Controllers;
-
-[Authorize]
-public class BookController : Controller
+namespace Library_Project.Controllers
 {
-    private readonly Context _context;
-
-    public BookController(Context context)
+    [Authorize]
+    public class BookController : Controller
     {
-        _context = context;
-    }
+        private readonly Context _context;
 
-    // All Books (Ana Sayfa)
-    public IActionResult Index()
-    {
-        var books = _context.Books.ToList();
-        return View(books);
-    }
-
-    // ==========================================
-    // YENİ EKLENEN KISIM: DETAYLAR VE YORUMLAR
-    // ==========================================
-
-    // Kitap Detayı ve Yorumları Göster
-    public IActionResult Details(int id)
-    {
-        // Kitabı bulurken Yorumları (Reviews) ve Yorumu Yapan Kullanıcıyı (User) dahil et
-        var book = _context.Books
-            .Include(b => b.Reviews)
-            .ThenInclude(r => r.User)
-            .FirstOrDefault(b => b.BOOK_ID == id);
-
-        if (book == null) return NotFound();
-
-        return View(book);
-    }
-
-    // Yorum Ekleme İşlemi
-    [HttpPost]
-    public IActionResult AddReview(int bookId, int rating, string comment)
-    {
-        // Oturum açan kullanıcının ID'sini al
-        int? userId = HttpContext.Session.GetInt32("id");
-
-        // Eğer oturum düşmüşse Login'e at
-        if (userId == null) return RedirectToAction("Login", "Account");
-
-        // Yeni yorum objesi oluştur
-        var newReview = new Review
+        public BookController(Context context)
         {
-            BOOK_ID = bookId,
-            USER_ID = (int)userId,
-            RATING = rating,
-            COMMENT = comment,
-            REVIEW_DATE = DateTime.Now
-        };
+            _context = context;
+        }
 
-        // Veritabanına ekle ve kaydet
-        _context.Reviews.Add(newReview);
-        _context.SaveChanges();
+        // ==========================================
+        // 1. LISTELEME (INDEX)
+        // ==========================================
+        public IActionResult Index()
+        {
+            var books = _context.Books.ToList();
+            return View(books);
+        }
 
-        // Kitabın detay sayfasına geri dön (Yorumu görsün)
-        return RedirectToAction("Details", new { id = bookId });
-    }
+        // ==========================================
+        // 2. DETAYLAR VE YORUMLAR (DETAILS)
+        // ==========================================
+        public IActionResult Details(int id)
+        {
+            var book = _context.Books
+                .Include(b => b.Reviews)
+                .ThenInclude(r => r.User)
+                .FirstOrDefault(b => b.BOOK_ID == id);
 
-    // ==========================================
-    // ADMIN İŞLEMLERİ (MEVCUT KODLARIN)
-    // ==========================================
+            if (book == null) return NotFound();
 
-    // Add Book (Only Admin)
-    [Authorize(Policy = "AdminOnly")]
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> Create(Book book)
-    {
-        if (!ModelState.IsValid)
             return View(book);
+        }
 
-        _context.Books.Add(book);
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    // Lend (Only Admin)
-    [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> Loan(int bookId, int userId)
-    {
-        var book = await _context.Books.FindAsync(bookId);
-        var user = await _context.Users.FindAsync(userId);
-
-        if (book == null || user == null)
-            return NotFound();
-
-        if (!book.CanBeLoaned())
-            return BadRequest("Kitap ödünç verilemez.");
-
-        var loan = new Loan
+        // ==========================================
+        // 3. YORUM EKLEME (ADD REVIEW)
+        // ==========================================
+        [HttpPost]
+        public IActionResult AddReview(int bookId, int rating, string comment)
         {
-            BOOK_ID = book.BOOK_ID,
-            USER_ID = user.USER_ID,
-            LOAN_DATE = DateTime.Now,
-            DUE_DATE = DateTime.Now.AddDays(14),
-            STATUS = true
-        };
+            int? userId = HttpContext.Session.GetInt32("id");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-        book.DecreaseStock();
+            var newReview = new Review
+            {
+                BOOK_ID = bookId,
+                USER_ID = (int)userId,
+                RATING = rating,
+                COMMENT = comment,
+                REVIEW_DATE = DateTime.Now
+            };
 
-        _context.Loans.Add(loan);
-        await _context.SaveChangesAsync();
+            _context.Reviews.Add(newReview);
+            _context.SaveChanges();
 
-        return RedirectToAction(nameof(Index));
-    }
+            // Puan ortalamasını güncelle
+            var book = _context.Books.Include(b => b.Reviews).FirstOrDefault(b => b.BOOK_ID == bookId);
+            if (book != null && book.Reviews.Any())
+            {
+                book.RATING = Math.Round(book.Reviews.Average(r => r.RATING), 1);
+                _context.SaveChanges();
+            }
 
-    // Take Return (Only Admin)
-    [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> Return(int loanId)
-    {
-        var loan = await _context.Loans
-            .FirstOrDefaultAsync(l => l.LOAN_ID == loanId);
+            return RedirectToAction("Details", new { id = bookId });
+        }
 
-        if (loan == null)
-            return NotFound();
+        // ==========================================
+        // 4. KİTAP EKLEME (CREATE) - SADECE ADMIN
+        // ==========================================
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
 
-        var book = await _context.Books
-            .FirstOrDefaultAsync(b => b.BOOK_ID == loan.BOOK_ID);
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public async Task<IActionResult> Create(Book book)
+        {
+            if (ModelState.IsValid)
+            {
+                book.STATUS = true;
+                book.RATING = 0;
+                _context.Books.Add(book);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(book);
+        }
 
-        if (book == null)
-            return NotFound();
+        // ==========================================
+        // 5. İADE ALMA (RETURN) - TEK VE DÜZELTİLMİŞ HALİ
+        // ==========================================
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Return(int loanId)
+        {
+            // Index sayfasından 'loanId' parametresiyle aslında 'BookID' gönderiyoruz.
+            // Bu yüzden önce bu kitabın aktif ödünç kaydını bulmalıyız.
 
-        loan.CloseLoan();
-        book.IncreaseStock();
+            // Kitabı bul
+            var book = await _context.Books.FindAsync(loanId);
 
-        await _context.SaveChangesAsync();
+            // Aktif ödünç kaydını bul (Status: true veya Active olan)
+            var loan = await _context.Loans
+                .FirstOrDefaultAsync(l => l.BOOK_ID == loanId && l.STATUS == true); // STATUS bool ise
 
-        return RedirectToAction(nameof(Index));
+            if (loan == null)
+            {
+                TempData["Message"] = "⚠️ Bu kitap şu an ödünçte görünmüyor!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // --- CEZA HESAPLAMA MANTIĞI (Grace Period: 24 Saat) ---
+         // PDF Referansı: REQ-SYS-012 
+            double dailyRate = 10.0;
+            double fineAmount = 0;
+
+            if (DateTime.Now > loan.DUE_DATE.AddDays(1))
+            {
+                TimeSpan delay = DateTime.Now - loan.DUE_DATE;
+                int lateDays = delay.Days;
+                fineAmount = lateDays * dailyRate;
+                TempData["Message"] = $"⚠️ Kitap {lateDays} gün gecikti! Ceza: {fineAmount} TL";
+            }
+            else
+            {
+                TempData["Message"] = "✅ Kitap zamanında iade alındı.";
+            }
+            // ----------------------------------------------------
+
+            // İşlemi kapat
+            loan.STATUS = false; // Ödüncü kapat
+            loan.RETURN_DATE = DateTime.Now;
+
+            if (book != null)
+            {
+                book.STOCK += 1; // Stoğu artır
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ==========================================
+        // 6. ÖDÜNÇ VERME (LOAN)
+        // ==========================================
+        [Authorize(Policy = "AdminOnly")]
+        public IActionResult Loan(int bookId)
+        {
+            // Index sayfasından tıklandığında Admin Loan sayfasına yönlendirsin
+            return RedirectToAction("Loan", "Admin", new { bookId = bookId });
+        }
     }
 }

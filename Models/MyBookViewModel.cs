@@ -1,8 +1,22 @@
-﻿namespace Library_Project.Models;
+﻿using System;
 
-public class MyBookViewModel
+namespace Library_Project.Models
 {
-    public string Title { get; set; } = string.Empty;
-    public DateTime DueDate { get; set; }
-    public int RemainingDays { get; set; }
+    public class MyBookViewModel
+    {
+        // Kitap ID'si (Detay sayfasına gitmek için lazım)
+        public int BookId { get; set; }
+
+        // Kitap Başlığı
+        public string Title { get; set; } = string.Empty;
+
+        // Son Teslim Tarihi
+        public DateTime DueDate { get; set; }
+
+        // Kalan Gün Sayısı
+        public int RemainingDays { get; set; }
+
+        // Ceza Miktarı (Eksik olan kısım burasıydı)
+        public double FineAmount { get; set; }
+    }
 }
