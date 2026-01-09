@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "CkEydLDS94A=",
+  "dgSpecHash": "U4ga4/1Pmrg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\2eeyn\\OneDrive\\Belgeler\\Library_Project_v2\\Library_Project.csproj",
+  "projectFilePath": "C:\\Users\\2eeyn\\OneDrive\\Belgeler\\Library_Project_v2_2\\Library_Project_v2\\Library_Project.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\2eeyn\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\2eeyn\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

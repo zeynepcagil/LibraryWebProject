@@ -1,66 +1,84 @@
-# 📚 Library Automation Project
+# 📚 Smart Library Management System
 
-This document contains setup instructions for the database and an overview of the current project status, features, and architecture.
-
----
-
-## 🗄️ Library Database Setup
-
-This repository contains the structure and data of the **library** database. Your colleagues can create the same database on their local SQL Server by following the steps below.
-
-### Requirements
-- SQL Server (Express or full version)
-- SQL Server Management Studio (SSMS)
-
-### Setup Steps
-1. Download or copy the `script.sql` file from this repository.
-2. Open **SSMS** and connect to your server.
-3. Open a **New Query** window.
-4. Paste the entire code from `script.sql` into the query window **or** open it via `File → Open → script.sql`.
-5. Click **Execute**.
-6. After execution, the `library` database along with all tables, relationships, stored procedures, and data will be created.
-
-### ⚠️ Important Notes
-- If the database already exists, you may need to **delete the old one first**.
-- **Local Copy Only:** Once the script is executed, the database is created **only on your local machine**. It is **not automatically connected** to the original database on someone else’s computer.
-- Every person will have their own independent copy of the database.
+This project is a library management solution developed with **ASP.NET Core MVC**. It focuses on automating library assets, borrowing workflows, and enforcing smart business rules for user management.
 
 ---
 
-## ✅ Completed Features
+## 🚀 Project Status & Features
 
-### 1. Advanced Authentication & Navigation
-- **Role-Based Redirection:** When logging in, the system automatically checks if the user is an **Admin** or a **Student**.
-  - **Admins** are redirected to the Admin Homepage with management tools.
-  - **Students** are redirected to the User Homepage.
-- **Error Handling:** The login page provides specific error messages for incorrect passwords or usernames.
-- **Navigation:** Seamless navigation is implemented for Login, Logout, and page transitions.
+The currently active modules in the system are as follows:
 
-### 2. Admin Privileges (Librarian)
-- **Book Management:** Admins have exclusive access to add new books to the library inventory.
-- **Borrowing System:**
-  - Dedicated **"Borrow Book"** page for Admins.
-  - The Admin selects a **User** and a **Book** from the database.
-  - **Logic:** There is no manual "mark as borrowed" checkbox; clicking the "Borrow" button automatically decreases stock and creates a loan record in the system.
+### 1. Authentication & Authorization
+- **Login:** Users can log in using their email and password.
+- **Role Management:** The system automatically detects whether the logged-in user is a **Student** or an **Admin**.
+  - **Admin:** Redirected to the Management Panel.
+  - **Student:** Redirected to the Book Search page.
+- **Register:** New users can register to the system as students.
 
-### 3. User Features (Student)
-- **My Books:** Upon logging in, students can view the books they have currently borrowed.
-- **Tracking:** The system displays:
-  - The **Due Date** for the book.
-  - A **Remaining Days** counter (automatically calculated).
-  - Status indicators (e.g., if a book is overdue).
+### 2. Book Management
+- **Listing:** All books are listed on the home page.
+- **Search & Filter:**
+  - Search by book title or author.
+  - Filter by categories.
+  - Stock status check.
+- **Add Book:** Only users with Admin privileges can add new books.
+
+### 3. Borrowing System (Core)
+- **Admin Panel:** The Librarian (Admin) initiates the borrowing process by selecting a user and a book from a dedicated interface.
+- **Stock Tracking:** When a borrowing transaction occurs, the system automatically decreases the **Stock** quantity by 1.
+- **Logging:** The transaction is recorded in the `Loans` table.
+
+### 4. Student Panel (My Books)
+- **My Books:** Students can view the books assigned to them after logging in.
+- **Time Tracking:**
+  - Last delivery date (Due Date).
+  - Remaining days.
+  - "Overdue" alerts for late returns.
 
 ---
 
-## 📂 Project Architecture Notes
+## 🛠️ Setup Instructions
 
-Please pay attention to the following file structures during development:
+Follow these steps to run the project on your local machine:
 
-### Models
-* `Context.cs`: Handles database connections (`Books`, `Users`, `Loans`).
+### 1. Database Setup
+We will use the `script.sql` file located in the project root directory.
+1. Open SQL Server Management Studio (SSMS) or Azure Data Studio.
+2. Open and **Execute** the `script.sql` file.
+   - *This action will create the `library` database and load the Seed Data.*
 
-### Controllers
-* `AdminController`: Manages Librarian operations (Borrowing flow, User selection).
-* `BookController`: Handles book creation and listing.
-* `UserController`: Handles Student-specific views (My Borrowed Books).
-* `AccountController`: Manages Login/Register logic and Role checks.
+### 2. Connection String Configuration
+Open the `appsettings.json` file and update the `ConnectionStrings` section with your own SQL Server credentials:
+
+```json
+"ConnectionStrings": {
+  "Context": "Server=LOCALHOST;Database=library;Trusted_Connection=True;TrustServerCertificate=True;"
+}
+```
+### 3. Running the Project
+Open your terminal and run the following command:
+```
+dotnet run
+```
+
+## 📂 Project Architecture
+The project is developed following the **MVC (Model-View-Controller)** architecture.
+
+**Models:**
+- `Context.cs`: Entity Framework Core database context.
+- `Book.cs`: Book data and stock logic.
+- `User.cs`: User information and role definitions.
+- `Loan.cs`: Borrowing records.
+
+**Controllers:**
+- `AdminController`: Manages borrowing operations.
+- `UserController`: Manages the Student panel (MyBooks).
+- `BookController`: Manages book listing and addition.
+- `AccountController`: Manages Login/Register operations.
+
+---
+
+## 📝 Future Plans (To-Do)
+- [ ] Return Process: Implementation of book return interface.
+- [ ] Penalty System: Logic for calculating fines for overdue books.
+- [ ] Reviews: Feature for students to rate and comment on books.
