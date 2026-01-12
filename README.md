@@ -26,6 +26,32 @@ This repository contains the structure and data of the **library** database. You
 
 ---
 
+## 📸 Project Screenshots
+
+### 🔐 Authentication & Entry
+**Sign Up Screen:** Clean interface for new student registration.
+![Sign Up Screen](screenshots/signup.png)
+
+### 🛡️ Admin Dashboard & Management
+**Admin Panel:** The central hub for library management.
+![Admin Panel](screenshots/admin_panel.png)
+
+**Add New Book:** Interface for cataloging new inventory.
+![Add New Book](screenshots/add_new_book.png)
+
+**Lend Book:** Dedicated workflow for assigning books to students.
+![Lend Book](screenshots/lend_book.png)
+
+
+### 👤 Student Experience
+**My Library Page:** Students can track their active loans and check due dates.
+![My Library Page](screenshots/my_library.png)
+
+**Reviews:** Users can rate books and leave feedback.
+![Review Page](screenshots/review.png)
+
+---
+
 ## ✅ Completed Features
 
 ### 1. Advanced Authentication & Navigation
@@ -38,8 +64,8 @@ This repository contains the structure and data of the **library** database. You
 ### 2. Admin Privileges (Librarian)
 - **Inventory Management:** Full CRUD capabilities for Books. Admin can add new books with details (Author, Category, Stock, Page Count, etc.).
 - **Smart Return System & Fine Calculation:**
-  - [cite_start]**Grace Period Logic:** [cite: 42, 268] A 24-hour grace period is applied after the due date.
-  - [cite_start]**Automated Fines:** [cite: 268] If a book is returned late (beyond grace period), the system automatically calculates the fine: `(Late Days * Daily Rate)`.
+  - **Grace Period Logic:** A 24-hour grace period is applied after the due date.
+  - **Automated Fines:** If a book is returned late (beyond grace period), the system automatically calculates the fine: `(Late Days * Daily Rate)`.
   - **Visual Alerts:** The system displays color-coded alerts (Yellow ⚠️ for fines, Green ✅ for on-time returns) during the return process.
 - **Borrowing System:**
   - Dedicated **"Loan Book"** workflow.
