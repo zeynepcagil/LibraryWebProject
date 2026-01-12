@@ -18,12 +18,11 @@ This repository contains the structure and data of the **library** database. You
 3. Open a **New Query** window.
 4. Paste the entire code from `script.sql` into the query window **or** open it via `File → Open → script.sql`.
 5. Click **Execute**.
-6. After execution, the `library` database along with all tables, relationships, stored procedures, and data will be created.
+6. After execution, the `library` database along with all tables (**Books, Users, Loans, Reviews**), relationships, stored procedures, and data will be created.
 
 ### ⚠️ Important Notes
 - If the database already exists, you may need to **delete the old one first**.
 - **Local Copy Only:** Once the script is executed, the database is created **only on your local machine**. It is **not automatically connected** to the original database on someone else’s computer.
-- Every person will have their own independent copy of the database.
 
 ---
 
@@ -33,22 +32,33 @@ This repository contains the structure and data of the **library** database. You
 - **Role-Based Redirection:** When logging in, the system automatically checks if the user is an **Admin** or a **Student**.
   - **Admins** are redirected to the Admin Homepage with management tools.
   - **Students** are redirected to the User Homepage.
-- **Error Handling:** The login page provides specific error messages for incorrect passwords or usernames.
-- **Navigation:** Seamless navigation is implemented for Login, Logout, and page transitions.
+- **Session Management:** Secure session handling ensures users remain logged in and their UserID is accessible for transactions (like writing reviews).
+- **Navigation:** Dynamic navbar that adjusts links based on the user's role (e.g., "Books Management" is hidden from Students).
 
 ### 2. Admin Privileges (Librarian)
-- **Book Management:** Admins have exclusive access to add new books to the library inventory.
+- **Inventory Management:** Full CRUD capabilities for Books. Admin can add new books with details (Author, Category, Stock, Page Count, etc.).
+- **Smart Return System & Fine Calculation:**
+  - [cite_start]**Grace Period Logic:** [cite: 42, 268] A 24-hour grace period is applied after the due date.
+  - [cite_start]**Automated Fines:** [cite: 268] If a book is returned late (beyond grace period), the system automatically calculates the fine: `(Late Days * Daily Rate)`.
+  - **Visual Alerts:** The system displays color-coded alerts (Yellow ⚠️ for fines, Green ✅ for on-time returns) during the return process.
 - **Borrowing System:**
-  - Dedicated **"Borrow Book"** page for Admins.
-  - The Admin selects a **User** and a **Book** from the database.
-  - **Logic:** There is no manual "mark as borrowed" checkbox; clicking the "Borrow" button automatically decreases stock and creates a loan record in the system.
+  - Dedicated **"Loan Book"** workflow.
+  - Automatic stock decrement upon successful loan.
 
 ### 3. User Features (Student)
-- **My Books:** Upon logging in, students can view the books they have currently borrowed.
-- **Tracking:** The system displays:
-  - The **Due Date** for the book.
-  - A **Remaining Days** counter (automatically calculated).
-  - Status indicators (e.g., if a book is overdue).
+- **My Library Dashboard:**
+  - Students can view their active loans in a modern card layout.
+  - **Real-time Fine Tracking:** If a book is overdue, the system calculates and displays the **Current Fine Amount** in red directly on the dashboard.
+  - **Status Indicators:** Badges show "Days Left" (Green/Yellow) or "Overdue" (Red).
+- **Book Details & Interaction:**
+  - Students can view detailed book information.
+  - **Review & Rating System:** Logged-in students can rate books (1-10) and leave comments.
+  - **Average Rating:** The system automatically recalculates the book's average score after every new review.
+
+### 4. UI/UX Modernization
+- **Living Dashboard:** The Home page features a "Live Occupancy" widget simulating library capacity.
+- **Card Design:** Replaced standard tables with modern Bootstrap Cards, Shadows, and Badge indicators for a cleaner look.
+- **Responsive:** Optimized for both desktop and mobile views.
 
 ---
 
@@ -57,14 +67,18 @@ This repository contains the structure and data of the **library** database. You
 Please pay attention to the following file structures during development:
 
 ### Models
-* `Context.cs`: Handles database connections (`Books`, `Users`, `Loans`).
+* `Context.cs`: Handles database connections (`Books`, `Users`, `Loans`, `Reviews`).
+* `MyBookViewModel.cs`: A DTO (Data Transfer Object) used to carry Book details + Fine Amount to the User View.
 
 ### Controllers
-* `AdminController`: Manages Librarian operations (Borrowing flow, User selection).
-* `BookController`: Handles book creation and listing.
-* `UserController`: Handles Student-specific views (My Borrowed Books).
-* `AccountController`: Manages Login/Register logic and Role checks.
+* `AdminController`: Manages general Admin navigation.
+* `BookController`: The core logic hub. Handles:
+  - Listing & Creating Books.
+  - **Return Logic** (with Fine Calculation).
+  - **Review Logic** (AddReview).
+  - Book Details.
+* `UserController`: Handles Student-specific views, specifically `MyBooks`, which includes on-the-fly fine calculation for display.
+* `AccountController`: Manages Login/Register logic, Session creation, and Role checks.
 
-### apsettings.json
-**Change the password in the given position according to your database server**     
-"DefaultConnection": "Server=localhost,1433;Database=library;User Id=sa; **Password=----------**;TrustServerCertificate=True;"
+### appsettings.json
+**Change the password in the given position according to your database server** `"DefaultConnection": "Server=localhost,1433;Database=library;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True;"`

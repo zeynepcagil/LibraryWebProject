@@ -118,7 +118,7 @@ namespace Library_Project.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // --- CEZA HESAPLAMA MANTIĞI (Grace Period: 24 Saat) ---
+         // --- CEZA HESAPLAMA MANTIĞI (Grace Period: 24 Saat) ---
          // PDF Referansı: REQ-SYS-012 
             double dailyRate = 10.0;
             double fineAmount = 0;

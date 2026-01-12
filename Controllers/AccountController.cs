@@ -48,9 +48,6 @@ public class AccountController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
-        // ============================================================
-        // EKLENEN KISIM: Session'a ID atıyoruz (Yorum yapabilmek için şart)
-        // ============================================================
         HttpContext.Session.SetInt32("id", user.USER_ID);
 
         return RedirectToAction("Index", "Home");
@@ -60,7 +57,7 @@ public class AccountController : Controller
     {
         await HttpContext.SignOutAsync();
 
-        // Çıkış yapınca session'ı da temizleyelim
+      
         HttpContext.Session.Clear();
 
         return RedirectToAction("Index", "Home");
@@ -92,7 +89,7 @@ public class AccountController : Controller
         {
             USERNAME = model.USERNAME,
             EMAIL = model.EMAIL,
-            PASSWORD = model.PASSWORD, // şimdilik plain (sonra hashleriz)
+            PASSWORD = model.PASSWORD,
             NAME = model.NAME,
             SURNAME = model.SURNAME,
             BIRTHDATE = model.BIRTHDATE,
@@ -119,9 +116,7 @@ public class AccountController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
-        // ============================================================
-        // BURAYA DA EKLİYORUZ (Kayıt olunca hemen yorum yapabilsin diye)
-        // ============================================================
+ 
         HttpContext.Session.SetInt32("id", user.USER_ID);
 
         return RedirectToAction("Index", "Home");

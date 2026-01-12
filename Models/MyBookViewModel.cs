@@ -16,7 +16,7 @@ namespace Library_Project.Models
         // Kalan Gün Sayısı
         public int RemainingDays { get; set; }
 
-        // Ceza Miktarı (Eksik olan kısım burasıydı)
+        // Ceza Miktarı 
         public double FineAmount { get; set; }
     }
 }
