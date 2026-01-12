@@ -30,25 +30,25 @@ This repository contains the structure and data of the **library** database. You
 
 ### 🔐 Authentication & Entry
 **Sign Up Screen:** Clean interface for new student registration.
-![Sign Up Screen](screenshots/signup.png)
+![Sign Up Screen](screenshots/signup.jpeg)
 
 ### 🛡️ Admin Dashboard & Management
 **Admin Panel:** The central hub for library management.
-![Admin Panel](screenshots/admin_panel.png)
+![Admin Panel](screenshots/admin_panel.jpeg)
 
 **Add New Book:** Interface for cataloging new inventory.
-![Add New Book](screenshots/add_new_book.png)
+![Add New Book](screenshots/add_new_book.jpeg)
 
 **Lend Book:** Dedicated workflow for assigning books to students.
-![Lend Book](screenshots/lend_book.png)
+![Lend Book](screenshots/lend_book.jpeg)
 
 
 ### 👤 Student Experience
 **My Library Page:** Students can track their active loans and check due dates.
-![My Library Page](screenshots/my_library.png)
+![My Library Page](screenshots/my_library.jpeg)
 
 **Reviews:** Users can rate books and leave feedback.
-![Review Page](screenshots/review.png)
+![Review Page](screenshots/review.jpeg)
 
 ---
 
